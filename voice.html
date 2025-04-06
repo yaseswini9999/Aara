@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aara ChatGPT Voice Bot (Final Clean)</title>
+  <style>
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    button, select {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      background: #1f1f1f;
+      color: #fff;
+    }
+    #userSpoken {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #99ffcc;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Aara - Emotional Voice Bot (integrated soon in app..it is a sample demo)</h1>
+  <select id="language">
+    <option value="en-US">English</option>
+    <option value="hi-IN">Hindi</option>
+    <option value="te-IN">Telugu</option>
+    <option value="pa-IN">Punjabi</option>
+  </select>
+  <br />
+  <button onclick="startBot()">🎙️ Speak to Aara</button>
+  <div id="userSpoken">You said: ...</div>
+
+  <script>
+    const API_KEY = "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";
+
+    async function getChatGPTReply(message) {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "system",
+              content: "You are a kind and emotionally supportive friend. Respond warmly and kindly to the user's message."
+            },
+            {
+              role: "user",
+              content: message
+            }
+          ]
+        })
+      });
+      const data = await res.json();
+      return data.choices?.[0]?.message?.content || "Sorry, I didn’t understand that.";
+    }
+
+    function speakOut(text, langCode) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = langCode;
+      utterance.rate = 1.1;
+      speechSynthesis.speak(utterance);
+    }
+
+    function startBot() {
+      const lang = document.getElementById("language").value;
+      const output = document.getElementById("userSpoken");
+
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = lang;
+      recognition.start();
+      output.innerText = "Listening...";
+
+      recognition.onresult = async function (event) {
+        const transcript = event.results[0][0].transcript;
+        output.innerText = `You said: ${transcript}`;
+
+        const reply = await getChatGPTReply(transcript);
+        speakOut(reply, lang);
+      };
+
+      recognition.onerror = function () {
+        output.innerText = "Error capturing voice. Please try again.";
+      };
+    }
+  </script>
+</body>
+</html>
