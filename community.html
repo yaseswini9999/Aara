@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aara – Your Wellness Companion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBgpoJNDP0eRT4ByPqJtuTmyoIZRmcuQ2s",
+    authDomain: "aara-community.firebaseapp.com",
+    projectId: "aara-community",
+    appId: "1:356114692048:web:62fdb3aefeef76b3782bd5",
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(145deg, #0d0d0d, #1c1c1c);
+      color: #f1f1f1;
+      overflow-x: hidden;
+    }
+    .nav-bar {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      background: #121212; padding: 12px; position: sticky; top: 0; z-index: 1000;
+    }
+    .nav-bar button {
+      background: linear-gradient(to right, #333, #555);
+      color: #00fff7; border: none; padding: 10px 16px; border-radius: 8px;
+      cursor: pointer; font-weight: 500; transition: all 0.3s ease;
+    }
+    .nav-bar button:hover {
+      background: #00fff7; color: #000; transform: scale(1.05);
+    }
+    .section { display: none; padding: 20px; animation: fadeIn 0.5s ease-in-out; }
+    .section.visible { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .post { background: #1a1a1a; padding: 15px; margin-bottom: 15px; border-radius: 10px; box-shadow: 0 3px 8px rgba(0,255,255,0.1); }
+    select, input, textarea {
+      width: 100%; padding: 10px; margin: 10px 0;
+      background: #222; color: white; border: 1px solid #444; border-radius: 8px;
+    }
+    .language-boxes {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .language-boxes button {
+      padding: 15px; background: #222; border-radius: 10px; color: #fff;
+      border: none; cursor: pointer;
+    }
+    .language-boxes button:hover { background: #00d4ff; color: black; }
+  </style>
+</head>
+<body>
+  <!-- Google Sign-In Login UI -->
+<section id="loginSection" style="text-align: center; padding: 50px;">
+  <h1>Welcome to Aara</h1>
+  <button onclick="googleSignIn()" style="padding: 10px 20px; font-size: 16px;">Sign in with Google</button>
+
+  <form id="userDetailsForm" style="display: none; margin-top: 20px;">
+    <input type="text" id="nickname" placeholder="Enter Nickname" required><br><br>
+    <input type="date" id="birthday" required><br><br>
+    <input type="text" id="emergency" placeholder="Emergency Contact Info" required><br><br>
+    <button type="button" onclick="saveUserDetails()">Continue</button>
+  </form>
+</section>
+<div id="mainApp" style="display: none;">
+  <nav class="nav-bar">
+    <button onclick="showSection('home')">Home</button>
+    <button onclick="showSection('upload')">Upload Post</button>
+    <button onclick="showSection('voice')">Voice Chat</button>
+    <button onclick="showSection('community')">Community</button>
+    <button onclick="showSection('volunteer')">Volunteer</button>
+    <button onclick="showSection('blog')">Blog</button>
+    <button onclick="showSection('settings')">Settings</button>
+    <button onclick="showSection('therapy board ai-class')">therapy board ai-class</button>
+    <button onclick="showSection('helpline')">Helpline</button>
+  </nav>
+
+  <section id="home" class="section visible">
+    <h2>Welcome to Aara</h2>
+    <div id="postList"></div>
+    <div>
+      <h3>Today’s Quote</h3>
+      <p id="quote">Fetching daily quote...</p>
+      <small id="dateInfo"></medium>
+    </div>
+  </section>
+
+  <section id="upload" class="section">
+    <h2>Upload Post</h2>
+    <select id="postType">
+      <option disabled selected>Select Section</option>
+      <option value="blog">Blog</option>
+      <option value="therapy">Therapy</option>
+      <option value="ai-class">AI Class</option>
+    </select>
+    <input type="text" id="postTitle" placeholder="Post Title" />
+    <textarea id="postContent" placeholder="Write your content..."></textarea>
+    <button onclick="uploadPost()">Upload</button>
+  </section>
+
+  <section id="voice" class="section">
+    <h2>Voice Chat</h2>
+    <select id="voiceLang">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="te">Telugu</option>
+      <option value="pu">punjabi</option>
+    </select>
+    <textarea id="voiceInput" placeholder="Speak" ></textarea>
+    <button onclick="startMic()"> Mic</button>
+    <button onclick="speakBack()">Speak</button>
+  </section>
+
+  <section id="community" class="section">
+    <h2>Language-Based Community Rooms</h2>
+    <div class="language-boxes">
+      <button onclick="enterRoom('English')">English</button>
+      <button onclick="enterRoom('తెలుగు')">తెలుగు</button>
+      <button onclick="enterRoom('हिंदी')">हिंदी</button>
+      <button onclick="enterRoom('ਪੰਜਾਬੀ')">ਪੰਜਾਬੀ</button>
+    </div>
+    <div id="chatRoomContainer" style="margin-top:20px; display:none;">
+      <h3 id="roomTitle"></h3>
+      <div id="chatBox" style="background:#1e1e1e; padding:15px; height:250px; overflow-y:auto; border-radius:8px;"></div>
+      <input id="chatInput" type="text" placeholder="Type message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </section>
+
+  <section id="volunteer" class="section">
+    <h2>Volunteer with Aara</h2>
+    <p>Join our mission to bring emotional support and wellness to everyone.</p>
+    <button onclick="openForm()">Apply as Volunteer</button>
+    <iframe id="volunteerForm" style="display:none;width:100%;height:500px;margin-top:15px;" src="https://docs.google.com/forms/d/e/1FAIpQLSddentmOc3Sw_koJlfa9cLZWpyV9wO___rzVU5SU0T2QJZ9Gg/viewform?embedded=true"></iframe>
+  </section>
+
+  <section id="blog" class="section"><h2>Blog Section (Coming Soon)</h2></section>
+  <section id="settings" class="section"><h2>Settings (Coming Soon)</h2></section>
+  <section id="helpline" class="section">
+    <h2>Find Helpline</h2>
+    <select id="countrySelect">
+      <option>India</option><option>USA</option>
+    </select>
+    <input type="text" id="pinCode" placeholder="PIN Code"/>
+    <button onclick="findHelpline()">Find</button>
+    <div id="helplineResult" style="margin-top:10px;"></div>
+  </section>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(id).classList.add('visible');
+}
+
+function uploadPost() {
+  const type = document.getElementById("postType").value;
+  const title = document.getElementById("postTitle").value;
+  const content = document.getElementById("postContent").value;
+  const postList = document.getElementById("postList");
+  const post = document.createElement("div");
+  post.className = "post";
+  post.innerHTML = `<h4>${title} (${type})</h4><p>${content}</p><button onclick="this.parentElement.remove()">Delete</button>`;
+  postList.prepend(post);
+  showSection('home');
+}
+
+function enterRoom(lang) {
+  document.getElementById("chatRoomContainer").style.display = "block";
+  document.getElementById("roomTitle").innerText = lang + " Room";
+  document.getElementById("chatBox").innerHTML = "";
+}
+
+function sendMessage() {
+  const msg = document.getElementById("chatInput").value;
+  if (msg.trim() === "") return;
+  const div = document.createElement("div");
+  div.textContent = msg;
+  div.style.margin = "5px 0";
+  document.getElementById("chatBox").appendChild(div);
+  document.getElementById("chatInput").value = "";
+}
+
+function startMic() {
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = document.getElementById("voiceLang").value;
+  recognition.onresult = function(event) {
+    document.getElementById("voiceInput").value = event.results[0][0].transcript;
+  };
+  recognition.start();
+}
+
+function speakBack() {
+  const msg = new SpeechSynthesisUtterance(document.getElementById("voiceInput").value);
+  msg.lang = document.getElementById("voiceLang").value;
+  window.speechSynthesis.speak(msg);
+}
+
+function openForm() {
+  const form = document.getElementById("volunteerForm");
+  form.style.display = form.style.display === "block" ? "none" : "block";
+}
+
+function findHelpline() {
+  const country = document.getElementById("countrySelect").value;
+  const pin = document.getElementById("pinCode").value;
+  document.getElementById("helplineResult").innerText = `Helpline for ${country} (PIN ${pin}): 1800-123-HELP`;
+}
+
+fetch("https://zenquotes.io/api/today")
+  .then(res => res.json())
+  .then(data => document.getElementById("quote").innerText = `"${data[0].q}" — ${data[0].a}`)
+  .catch(() => document.getElementById("quote").innerText = "Stay strong. You're not alone.");
+const today = new Date();
+document.getElementById("dateInfo").innerText = today.toDateString() + " — Rani Laxmibai fled to Gwalior through Kalpi after giving a solid blow to British troops.";
+</script>
+</div> <!-- closing mainApp wrapper -->
+
+<script>
+  function googleSignIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .then(result => {
+        console.log('Signed in as:', result.user.displayName);
+        document.getElementById('userDetailsForm').style.display = 'block';
+      })
+      .catch(error => {
+        alert('Sign-in failed: ' + error.message);
+      });
+  }
+
+  function saveUserDetails() {
+    const nickname = document.getElementById('nickname').value;
+    const birthday = document.getElementById('birthday').value;
+    const emergency = document.getElementById('emergency').value;
+
+    if (nickname && birthday && emergency) {
+      localStorage.setItem('nickname', nickname);
+      localStorage.setItem('birthday', birthday);
+      localStorage.setItem('emergency', emergency);
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+    } else {
+      alert('Please fill out all fields.');
+    }
+  }
+</script>
+</body>
+</html>
