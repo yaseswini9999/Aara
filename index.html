@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aara – Main Wellness Site</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(145deg, #0e0e0e, #1b1b1b);
+      color: #fff;
+      overflow-x: hidden;
+    }
+    header {
+      text-align: center;
+      padding: 60px 20px 30px;
+      animation: fadeIn 1.5s ease-out;
+    }
+    header h1 {
+      font-size: 3rem;
+      color: #00ffe1;
+      text-shadow: 0 0 15px #00ffe1aa;
+      margin-bottom: 15px;
+    }
+    header p {
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px 20px;
+    }
+    .option-box {
+      background: linear-gradient(to bottom right, #1e1e1e, #2c2c2c);
+      border: 2px solid #00ffe1aa;
+      border-radius: 16px;
+      width: 280px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 255, 225, 0.1);
+      transition: all 0.4s ease;
+      animation: slideUp 1s ease forwards;
+    }
+    .option-box:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 0 25px rgba(0, 255, 225, 0.3);
+      background: linear-gradient(to bottom right, #2d2d2d, #3a3a3a);
+    }
+    .option-box h2 {
+      color: #00ffe1;
+      margin-bottom: 10px;
+    }
+    .option-box p {
+      color: #ccc;
+      font-size: 0.95rem;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Welcome to Aara</h1>
+    <p>Your AI-powered wellness partner – Speak, Heal, Connect</p>
+  </header>
+
+  <section class="options">
+    <div class="option-box" onclick="window.open('https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/06/07/20250406071350-QKLA44EJ.json')">
+      <h2>AI Chatbot (Aura)</h2>
+      <p>Talk with our emotionally intelligent AI for support and self-care.</p>
+    </div>
+    <div class="option-box" onclick="alert('VoiceBot link will be added soon!')">
+      <h2>Voice Chat</h2>
+      <p>Start a calming voice session with emotional tone detection.</p>
+    </div>
+    <div class="option-box" onclick="alert('Community site will be linked here soon.')">
+      <h2>Community</h2>
+      <p>Join your language-based chat rooms and share your thoughts.</p>
+    </div>
+  </section>
+
+  <footer>
+    Built with care by Yaseswini Sharma Manikonda & Amulya Badri | Aara 2024
+  </footer>
+
+</body>
+</html>
